@@ -21,6 +21,8 @@ public class App {
 
     /** Pilha de pedidos */
     static Pilha<Pedido> pilhaPedidos = new Pilha<>();
+
+    static Pilha<Produto> pilhaProdutosRecentes = new Pilha<>();
         
     static void limparTela() {
         System.out.print("\033[H\033[2J");
@@ -210,12 +212,47 @@ public class App {
      */
     public static void finalizarPedido(Pedido pedido) {
     	
-    	// TODO
+        if(pedido == null){
+            IO.println("Nenhum pedido um aberto para finalizar. ");
+            return;
+        }
+
+        pilhaPedidos.empilhar(pedido);
+
+        ItemDePedido[] itens = pedido.getItensDoPedido();
+        for(int i = 0; i < itens.length; i++){
+            if(itens[i] != null){
+                pilhaProdutosRecentes.empilhar(itens[i].getProduto());
+            }
+        }
+        System.out.println("Pedido finalizado com sucesso!\n" + pedido);
     }
+    
     
     public static void listarProdutosPedidosRecentes() {
     	
-    	// TODO
+    	cabecalho();
+
+        if(pilhaProdutosRecentes.vazia()){
+            System.out.println("Nenhuma produto registrado em pedidos ainda. ");
+            return;
+        }
+
+        int k = lerOpcao("Quantos produtos recentes deseja visualizar? ", Integer.class);
+
+        Pilha<Produto> recentes;
+        try{
+            recentes = pilhaProdutosRecentes.subPilha(k);
+        } catch(IllegalArgumentException e){
+            System.out.println("Não há produtos suficentes na pilha: " + e.getMessage());
+            return;
+        }
+
+        System.out.println("\n" + k + " produtos mais recentemente pedidos: ");
+        int numero = 1;
+        while(!recentes.vazia()){
+            System.out.println(String.format("%0d - %s", numero++, recentes.desempilhar()));
+        }
     }
     
 	public static void main(String[] args) {

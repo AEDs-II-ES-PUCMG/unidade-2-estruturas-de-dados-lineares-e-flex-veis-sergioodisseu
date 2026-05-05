@@ -54,7 +54,26 @@ public class Pilha<E> {
 	 */
 	public Pilha<E> subPilha(int numItens) {
 		
-		// TODO
-		return null;
+		if(vazia())
+			throw new IllegalArgumentException(
+					"A pilha não contém " + numItens + " elementos");
+
+		Pilha<E> subPilha = new Pilha<>();
+
+		Celula<E> original = topo;
+		Celula<E> subAtual = new Celula<>(original.getItem(), subPilha.fundo);
+		subPilha.topo = subAtual;
+
+		for(int i = 1; i < numItens; i++){
+			original = original.getProximo();
+			if(original == fundo)
+					throw new IllegalArgumentException("A pilha não contém " + numItens + " elementos");
+
+			Celula<E> novo = new Celula<>(original.getItem(), subPilha.fundo);
+			subAtual.setProximo(novo);
+			subAtual = novo;
+		}
+
+		return subPilha;
 	}
 }
